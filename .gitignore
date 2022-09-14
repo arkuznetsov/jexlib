@@ -1,0 +1,14 @@
+\.idea/
+\.vs/
+\.vscode/
+src/NUnitTests/bin/
+src/NUnitTests/obj/
+src/jexlib/bin/
+src/jexlib/obj/
+src/TestApp/bin/
+src/TestApp/obj/
+test/
+build/bin/
+*.ospx
+map.json
+tools/nuget.exe

@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{C9E6B10A-8892-47AD-B5BF-40C0581F559A}") = "jexlib", "jexlib\jexlib.csproj", "{2D9DC5CD-8CDC-4DB0-A05F-A2E727C6920A}"
+EndProject
+Project("{C9E6B10A-8892-47AD-B5BF-40C0581F559A}") = "TestApp", "TestApp\TestApp.csproj", "{B1470011-395F-487B-9926-17D9B35FC851}"
+EndProject
+Project("{C9E6B10A-8892-47AD-B5BF-40C0581F559A}") = "NUnitTests", "NUnitTests\NUnitTests.csproj", "{C0800F3B-5BBB-49F9-9C90-80850604B0BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D9DC5CD-8CDC-4DB0-A05F-A2E727C6920A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D9DC5CD-8CDC-4DB0-A05F-A2E727C6920A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D9DC5CD-8CDC-4DB0-A05F-A2E727C6920A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D9DC5CD-8CDC-4DB0-A05F-A2E727C6920A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1470011-395F-487B-9926-17D9B35FC851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1470011-395F-487B-9926-17D9B35FC851}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1470011-395F-487B-9926-17D9B35FC851}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1470011-395F-487B-9926-17D9B35FC851}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0800F3B-5BBB-49F9-9C90-80850604B0BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0800F3B-5BBB-49F9-9C90-80850604B0BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0800F3B-5BBB-49F9-9C90-80850604B0BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0800F3B-5BBB-49F9-9C90-80850604B0BB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
