@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    if: github.repository == 'arkuznetsov/deflator'
+    if: github.repository == 'arkuznetsov/jexlib'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
