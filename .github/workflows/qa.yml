@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [jexlib]
 
     steps:
       # Загрузка проекта
@@ -26,12 +26,6 @@ jobs:
         with:
           # Disabling shadow clone is recomended
           fetch-depth: 0
-
-      # https://stackoverflow.com/questions/58033366/how-to-get-current-branch-within-github-actions
-      - name: Извлечение имени текущей ветки
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
 
       # Установка NUnit3
       - name: Установка NUnit3
@@ -52,6 +46,35 @@ jobs:
           dotnet-coverage collect -o ./test/coverage.xml -f xml "./test/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./src/NUnitTests/bin/Debug/net452/NUnitTests.dll --result=./test/nunit-result.xml"
 
       - name: Извлечение версии пакета
-        shell: bash
-        run: echo "##[set-output name=version;]`cat ./build/packagedef | grep ".Версия(" | sed 's|[^"]*"||' | sed -r 's/".+//'`"
+        uses: actions-ecosystem/action-regex-match@v2
+        with:
+          text: ${{ steps.packagedef_data.outputs.data }}
+          regex: '.Версия\("((?:\d+\.)+\d+)"\)'
         id: extract_version
+
+      - name: Установка Sonar-scanner
+        uses: warchant/setup-sonar-scanner@v1
+
+      # Анализ проекта в SonarQube (ветка)
+      - name: Анализ в SonarQube (branch)
+        if: github.event_name == 'push'
+        shell: cmd
+        run: sonar-scanner
+            -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+            -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+            -Dsonar.branch.name=${{ env.BRANCH_NAME }}
+            -Dsonar.projectVersion=${{ steps.extract_version.outputs.group1 }}
+
+      # Анализ проекта в SonarQube (PR)
+      # https://docs.sonarqube.org/latest/analysis/pull-request/
+      - name: Анализ в SonarQube (pull-request)
+        if: github.event_name == 'pull_request'
+        shell: cmd
+        run: sonar-scanner
+            -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+            -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+            -Dsonar.branch.name=${{ env.BRANCH_NAME }}
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+            -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}

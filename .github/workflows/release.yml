@@ -9,7 +9,7 @@ on:
         types: [published, edited]
 
 env:
-  PACKAGE_MASK: deflator-*.ospx
+  PACKAGE_MASK: jexlib-*.ospx
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [jexlib]
         oscript_version: ['1.6.0']
         
     steps:
@@ -63,29 +63,28 @@ jobs:
       # Генерация документации
       - name: Генерация документации
         run: |
-          chmod +x ./build/OneScriptDocumenter/OneScriptDocumenter.exe
           ./build/OneScriptDocumenter/OneScriptDocumenter.exe json ./build/bin/syntaxHelp.json ./src/jexlib/bin/Release/net452/jexlib.dll
 
       # Сборка пакета OneScript
       - name: Сборка пакета
         run: opm build -o ./build ./build
 
-      # - name: Заливка артефактов
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: package.zip
-      #     path: ./build/${{ env.PACKAGE_MASK }}
+      # Заливка артефактов
+      - name: Заливка артефактов
+        uses: actions/upload-artifact@v2
+        with:
+          name: package.zip
+          path: ./build/${{ env.PACKAGE_MASK }}
 
       # Заливка в релиз
-      # - name: Заливка в релиз
-      #   uses: AButler/upload-release-assets@v1.0
-      #   with:
-      #     files: ./build/${{ env.PACKAGE_MASK }}
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Заливка в релиз
+        uses: AButler/upload-release-assets@v1.0
+        with:
+          files: ./build/${{ env.PACKAGE_MASK }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Публикация в hub.oscript.io
-      # - name: Публикация в hub.oscript.io
-      #   shell: bash
-      #   run: opm push -f ./build/${{ env.PACKAGE_MASK }} --token ${{ env.TOKEN }} -c stable
-      #   env:
-      #     TOKEN: ${{ secrets.OSHUB_TOKEN }}
+       Публикация в hub.oscript.io
+       - name: Публикация в hub.oscript.io
+         run: opm push -f ./build/${{ env.PACKAGE_MASK }} --token ${{ env.TOKEN }} -c stable
+         env:
+           TOKEN: ${{ secrets.OSHUB_TOKEN }}
