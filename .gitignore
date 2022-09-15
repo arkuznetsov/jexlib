@@ -7,8 +7,9 @@ src/jexlib/bin/
 src/jexlib/obj/
 src/TestApp/bin/
 src/TestApp/obj/
-test/
 build/bin/
+build/reports/
 *.ospx
 map.json
 tools/nuget.exe
+tools/test

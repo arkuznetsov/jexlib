@@ -17,7 +17,7 @@ IF NOT EXIST "%~dp0nuget.exe" (
 @dotnet tool install --global dotnet-coverage
 @dotnet restore %~dp0../src
 @dotnet build %~dp0../src --configuration Debug
-@mkdir "%~dp0../test"
-@dotnet-coverage collect -o %~dp0../test/coverage.xml -f xml "%~dp0../test/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe %~dp0../src/NUnitTests/bin/Debug/net452/NUnitTests.dll --result=%~dp0../test/nunit-result.xml"
+@mkdir "%~dp0../build/reports"
+@dotnet-coverage collect -o %~dp0../build/reports/coverage.xml -f xml "%~dp0../test/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe %~dp0../src/NUnitTests/bin/Debug/net452/NUnitTests.dll --result=%~dp0../build/reports/nunit-result.xml"
 @rd /S /Q "%~dp0../test/NUnit.ConsoleRunner.3.6.1"
 @exit /b %ERRORLEVEL%
