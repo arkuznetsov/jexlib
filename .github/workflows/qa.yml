@@ -29,7 +29,9 @@ jobs:
 
       # Установка NUnit3
       - name: Установка NUnit3
+        shell: pwsh
         run: |
+          curl -o "./tools/nuget.exe" https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
           nuget restore ./src
           nuget install NUnit.ConsoleRunner -Version 3.6.1 -OutputDirectory ./test
 
