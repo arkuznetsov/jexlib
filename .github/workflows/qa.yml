@@ -33,7 +33,7 @@ jobs:
         run: |
           curl -o "./tools/nuget.exe" https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
           ./tools/nuget.exe restore ./src
-          ./tools/nuget.exe install NUnit.ConsoleRunner -Version 3.6.1 -OutputDirectory ./test
+          ./tools/nuget.exe install NUnit.ConsoleRunner -Version 3.6.1 -OutputDirectory ./tools
 
       # Сборка компоненты для тестирования
       - name: Сборка компоненты для тестирования
@@ -45,7 +45,8 @@ jobs:
       - name: Запуск тестов NUnit3 и сборка покрытия
         run: |
           dotnet tool install --global dotnet-coverage
-          dotnet-coverage collect -o ./test/coverage.xml -f xml "./test/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./src/NUnitTests/bin/Debug/net452/NUnitTests.dll --result=./test/nunit-result.xml"
+          mkdir "./build/reports"
+          dotnet-coverage collect -o ./build/reports/coverage.xml -f xml "./tools/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./src/NUnitTests/bin/Debug/net452/NUnitTests.dll --result=./build/reports/nunit-result.xml"
 
       - name: Извлечение версии пакета
         uses: actions-ecosystem/action-regex-match@v2
