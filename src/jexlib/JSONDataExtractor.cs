@@ -14,6 +14,7 @@ using System.Linq;
 using ScriptEngine.Machine;
 using ScriptEngine.Machine.Contexts;
 using ScriptEngine.HostedScript.Library;
+using ScriptEngine.HostedScript.Library.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -72,9 +73,11 @@ namespace oscriptcomponent
         /// Выполняет выборку из JSON по указанному JSON-path
         /// </summary>
         /// <param name="path">Строка. JSON-path.</param>
+        /// <param name="getObjectAsJSON">Булево. Истина - объекты будут возвращены в виде строки JSON;
+        /// Ложь - Объекты будут возвращены в виде соответствия.</param>
         /// <returns>Строка - Выбранные данные</returns>
-        [ContextMethod("Выбрать")]
-        public IValue Select(string path)
+        [ContextMethod("Выбрать", "Selec")]
+        public IValue Select(string path, bool getObjectAsJSON = true)
         {
 
             IValue result;
@@ -83,7 +86,7 @@ namespace oscriptcomponent
 
             if (parseResult.Count() == 0)
             {
-                result = ValueFactory.Create("");
+                result = ValueFactory.Create();
             }
             else if (parseResult.Count() == 1)
             {
@@ -103,13 +106,24 @@ namespace oscriptcomponent
                 {
                     result = ValueFactory.Create(Convert.ToString(((JValue)parseResult[0]).Value));
                 }
-                else if (parseResult[0].Type == JTokenType.Object)
+                else if (parseResult[0].Type == JTokenType.Date)
                 {
-                    result = ValueFactory.Create(parseResult[0].ToString());
+                    result = ValueFactory.Create(Convert.ToDateTime(((JValue)parseResult[0]).Value));
+                }
+                else if (parseResult[0].Type == JTokenType.Object || parseResult[0].Type == JTokenType.Array)
+                {
+                    if (getObjectAsJSON)
+                    {
+                        result = ValueFactory.Create(parseResult[0].ToString());
+                    }
+                    else
+                    {
+                        result = JSONToMap(parseResult[0].ToString());
+                    }
                 }
                 else
                 {
-                    result = ValueFactory.Create("");
+                    result = ValueFactory.Create();
                 }
             }
             else
@@ -128,7 +142,15 @@ namespace oscriptcomponent
                     }
                     writer.WriteEndArray();
                 }
-                result = ValueFactory.Create(sb.ToString());
+                if (getObjectAsJSON)
+                {
+                    result = ValueFactory.Create(sb.ToString());
+                }
+                else
+                {
+                    result = JSONToMap(sb.ToString());
+
+                }
             }
 
             return result;
@@ -145,5 +167,17 @@ namespace oscriptcomponent
             return new JSONDataExtractor();
         }
 
+        /// <summary>
+        /// Преобразует строку JSON в соответствие
+        /// </summary>
+        /// <param name="JSONstring">Строка. Строка JSON.</param>
+        /// <returns>Соответствие - Соответствие, полученное из строки JSON</returns>
+        private IValue JSONToMap(string JSONstring)
+        {
+            JSONReader Reader = new JSONReader();
+            Reader.SetString(JSONstring);
+
+            return ((GlobalJsonFunctions)GlobalJsonFunctions.CreateInstance()).ReadJSONInMap(Reader);
+        }
     }
 }
