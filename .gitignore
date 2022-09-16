@@ -1,6 +1,7 @@
 \.idea/
 \.vs/
 \.vscode/
+\.sonarqube/
 src/NUnitTests/bin/
 src/NUnitTests/obj/
 src/jexlib/bin/

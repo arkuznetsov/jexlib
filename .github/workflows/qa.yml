@@ -9,6 +9,8 @@ on: [push, pull_request]
 env:
   # отключение безопасности установки, от 2020-10-01
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  PROJECT_KEY: "jexlib"
 
 jobs:
   build:
@@ -35,6 +37,51 @@ jobs:
           ./tools/nuget.exe restore ./src
           ./tools/nuget.exe install NUnit.ConsoleRunner -Version 3.6.1 -OutputDirectory ./tools
 
+      # Установка инструментов .NET
+      - name: Установка инструментов .NET
+        run: |
+          dotnet tool update --global dotnet-sonarscanner
+          dotnet tool update --global dotnet-coverage
+
+      # Извлечение версии пакета
+      - name: Получение packagedef
+        shell: pwsh
+        run: echo "::set-output name=data::$(type ./build/packagedef)\n"
+        id: packagedef_data
+
+      - name: Извлечение версии пакета
+        uses: actions-ecosystem/action-regex-match@v2
+        with:
+          text: ${{ steps.packagedef_data.outputs.data }}
+          regex: '.Версия\("((?:\d+\.)+\d+)"\)'
+        id: extract_version
+
+      # Начало анализа проекта в SonarQube (ветка)
+      - name: Начало анализа проекта в SonarQube (branch)
+        if: github.event_name == 'push'
+        run: dotnet sonarscanner begin
+            /s:${{ github.workspace }}/SonarQube.Analysis.xml
+            /k:${{ env.PROJECT_KEY }}
+            /v:${{ steps.extract_version.outputs.group1 }}
+            /d:sonar.host.url="${{ secrets.SONARQUBE_HOST }}"
+            /d:sonar.login="${{ secrets.SONARQUBE_TOKEN }}"
+            /d:sonar.branch.name="${{ env.BRANCH_NAME }}"
+
+      # Начало анализа проекта в SonarQube (PR)
+      # https://docs.sonarqube.org/latest/analysis/pull-request/
+      - name: Начало анализа проекта в SonarQube (pull-request)
+        if: github.event_name == 'pull_request'
+        run: dotnet sonarscanner begin
+            /s:${{ github.workspace }}/SonarQube.Analysis.xml
+            /k:${{ env.PROJECT_KEY }}
+            /d:sonar.host.url="${{ secrets.SONARQUBE_HOST }}"
+            /d:sonar.login="${{ secrets.SONARQUBE_TOKEN }}"
+            /d:sonar.branch.name="${{ env.BRANCH_NAME }}"
+            /d:sonar.pullrequest.key=${{ github.event.pull_request.number }}
+            /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+            /d:sonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+            /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}
+
       # Сборка компоненты для тестирования
       - name: Сборка компоненты для тестирования
         run: |
@@ -44,40 +91,9 @@ jobs:
       # Запуск тестов NUnit3
       - name: Запуск тестов NUnit3 и сборка покрытия
         run: |
-          dotnet tool install --global dotnet-coverage
           mkdir "./build/reports"
           dotnet-coverage collect -o ./build/reports/coverage.xml -f xml "./tools/NUnit.ConsoleRunner.3.6.1/tools/nunit3-console.exe ./src/NUnitTests/bin/Debug/net452/NUnitTests.dll --result=./build/reports/nunit-result.xml"
 
-      - name: Извлечение версии пакета
-        uses: actions-ecosystem/action-regex-match@v2
-        with:
-          text: ${{ steps.packagedef_data.outputs.data }}
-          regex: '.Версия\("((?:\d+\.)+\d+)"\)'
-        id: extract_version
-
-      - name: Установка Sonar-scanner
-        uses: warchant/setup-sonar-scanner@v1
-
-      # Анализ проекта в SonarQube (ветка)
-      - name: Анализ в SonarQube (branch)
-        if: github.event_name == 'push'
-        shell: cmd
-        run: sonar-scanner
-            -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-            -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-            -Dsonar.branch.name=${{ env.BRANCH_NAME }}
-            -Dsonar.projectVersion=${{ steps.extract_version.outputs.group1 }}
-
-      # Анализ проекта в SonarQube (PR)
-      # https://docs.sonarqube.org/latest/analysis/pull-request/
-      - name: Анализ в SonarQube (pull-request)
-        if: github.event_name == 'pull_request'
-        shell: cmd
-        run: sonar-scanner
-            -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-            -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-            -Dsonar.branch.name=${{ env.BRANCH_NAME }}
-            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
-            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
-            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
-            -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
+      # Завершение анализа проекта в SonarQube
+      - name: Завершение анализа проекта в SonarQube
+        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONARQUBE_TOKEN }}"
