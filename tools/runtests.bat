@@ -3,12 +3,6 @@
 echo %~dp0
 @chcp 65001
 
-FOR /f "usebackq tokens=*" %%a in ("%~dp0openssh\.env") DO (
-  FOR /F "tokens=1,2 delims==" %%b IN ("%%a") DO (
-    set "%%b=%%c"
-  )
-)
-
 IF NOT EXIST "%~dp0nuget.exe" (
   @"C:\windows\system32\WindowsPowerShell\v1.0\powershell.exe" curl -o "%~dp0nuget.exe" https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
 )
