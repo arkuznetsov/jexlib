@@ -80,13 +80,31 @@ namespace NUnitTests
 
 			Console.WriteLine("Всего тестов: {0}", testArray.Count());
 
+			int testResult;
+			string testException;
+
 			foreach (var ivTestName in testArray)
 			{
 				string testName = ivTestName.AsString();
 
 				Console.WriteLine("Скрипт: {0}, тест: {1}", resourceName, testName);
 
-				RunTestMethod(resourceName, testName);
+				testResult = RunTestMethod(resourceName, testName, out testException);
+				switch (testResult)
+				{
+					case -1:
+						Console.WriteLine("Тест: {0} не реализован!", testName);
+						break;
+					case 0:
+						Console.WriteLine("Тест: {0} пройден!", testName);
+						break;
+					case 1:
+						Console.WriteLine("Тест: {0} провален с сообщением: {1}", testName, testException);
+						break;
+					default:
+						Console.WriteLine("Тест: {0} вернул неожиданный результат: {1}", testName, testResult);
+						break;
+				}
 			}
 		}
 
@@ -117,8 +135,10 @@ namespace NUnitTests
 			return testArray;
 		}
 
-		public void RunTestMethod(string resourceName, string methodName)
+		public int RunTestMethod(string resourceName, string methodName, out string testException)
 		{
+			testException = "";
+
 			var source = LoadFromAssemblyResource(resourceName);
 			var module = engine.GetCompilerService().Compile(source);
 
@@ -140,16 +160,20 @@ namespace NUnitTests
 			}
 			catch
 			{
-				methodIndex = -1;
+				return -1;
 			}
 
-			if (methodIndex == -1)
+			try
 			{
-				// Тест указан, но процедуры нет или она не экспортирована
-				Console.WriteLine("Тест: {0} не реализован!", methodName);
+				test.CallAsProcedure(methodIndex, new IValue[] { });
+			}
+			catch (Exception e)
+			{
+				testException = e.ToString();
+				return 1;
 			}
 
-			test.CallAsProcedure(methodIndex, new IValue[] { });
+			return 0;
 		}
 
 		public ICodeSource LoadFromAssemblyResource(string resourceName)

@@ -52,15 +52,33 @@ namespace NUnitTests
 		public void TestAsInternalObjects()
 		{
 			var item1 = new JSONDataExtractor();
-       
-//			Assert.AreEqual(item1.ReadonlyProperty, "MyValue"); 
+
+			Assert.IsNotNull(item1, "Ошибка создания экземпляра класса {0}", typeof(JSONDataExtractor)); 
 		}
 
 		[TestCaseSource(nameof(TestCases))]
 		[Category("Test data extractor")]
 		public void TestAsExternalObjects(string testCase)
 		{
-			_host.RunTestMethod("NUnitTests.Tests.external.os", testCase);
+			string testException;
+
+			int result = _host.RunTestMethod("NUnitTests.Tests.external.os", testCase, out testException);
+			
+			switch (result)
+			{
+				case -1:
+					Assert.Ignore("Тест: {0} не реализован!", testCase);
+					break;
+				case 0:
+					Assert.Pass();
+					break;
+				case 1:
+					Assert.Fail("Тест: {0} провален с сообщением: {1}", testCase, testException);
+					break;
+				default:
+					Assert.Warn("Тест: {0} вернул неожиданный результат: {1}", testCase, result);
+					break;
+			}
 		}
 	}
 }
