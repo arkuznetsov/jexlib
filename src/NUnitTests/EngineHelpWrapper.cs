@@ -73,8 +73,24 @@ namespace NUnitTests
 			return engine;
 		}
 
-        [Obsolete]
-        public void RunTestScript(string resourceName)
+		public void RunTestScript(string resourceName)
+		{
+
+			ArrayImpl testArray = GetTestMethods(resourceName);
+
+			Console.WriteLine("Всего тестов: {0}", testArray.Count());
+
+			foreach (var ivTestName in testArray)
+			{
+				string testName = ivTestName.AsString();
+
+				Console.WriteLine("Скрипт: {0}, тест: {1}", resourceName, testName);
+
+				RunTestMethod(resourceName, testName);
+			}
+		}
+
+		public ArrayImpl GetTestMethods(string resourceName)
 		{
 			var source = LoadFromAssemblyResource(resourceName);
 			var module = engine.GetCompilerService().Compile(source);
@@ -98,27 +114,42 @@ namespace NUnitTests
 				}
 			}
 
-			foreach (var ivTestName in testArray)
+			return testArray;
+		}
+
+		public void RunTestMethod(string resourceName, string methodName)
+		{
+			var source = LoadFromAssemblyResource(resourceName);
+			var module = engine.GetCompilerService().Compile(source);
+
+			engine.LoadUserScript(new ScriptEngine.UserAddedScript()
 			{
-				string testName = ivTestName.AsString();
-				int methodIndex;
-				try
-				{
-					methodIndex = test.FindMethod(testName);
-				} catch
-                {
-					methodIndex = -1;
-				}
+				Type = ScriptEngine.UserAddedScriptType.Class,
+				Image = module,
+				Symbol = resourceName
+			});
 
-				if (methodIndex == -1)
-				{
-					// Тест указан, но процедуры нет или она не экспортирована
-					Console.WriteLine("Тест: {0} не реализован!", testName);
-					continue;
-				}
+			var test = AttachedScriptsFactory.ScriptFactory(resourceName, new IValue[] { });
 
-				test.CallAsProcedure(methodIndex, new IValue[] { });
+			int methodIndex = test.FindMethod("ПолучитьСписокТестов");
+			test.CallAsProcedure(methodIndex, new IValue[] { TestRunner });
+
+			try
+			{
+				methodIndex = test.FindMethod(methodName);
 			}
+			catch
+			{
+				methodIndex = -1;
+			}
+
+			if (methodIndex == -1)
+			{
+				// Тест указан, но процедуры нет или она не экспортирована
+				Console.WriteLine("Тест: {0} не реализован!", methodName);
+			}
+
+			test.CallAsProcedure(methodIndex, new IValue[] { });
 		}
 
 		public ICodeSource LoadFromAssemblyResource(string resourceName)

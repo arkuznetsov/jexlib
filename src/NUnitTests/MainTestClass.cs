@@ -8,6 +8,8 @@ https://opensource.org/licenses/MIT.
 
 using NUnit.Framework;
 using oscriptcomponent;
+using System.Collections.Generic;
+using ScriptEngine.HostedScript.Library;
 
 // Используется NUnit 3.6
 
@@ -19,6 +21,25 @@ namespace NUnitTests
 
 		private EngineHelpWrapper _host;
 
+		public static List<TestCaseData> TestCases
+		{
+			get
+            {
+				var testCases = new List<TestCaseData>();
+				EngineHelpWrapper _host = new EngineHelpWrapper();
+				_host.StartEngine();
+
+				ArrayImpl testMethods =_host.GetTestMethods("NUnitTests.Tests.external.os");
+
+				foreach (var ivTestMethod in testMethods)
+				{
+					testCases.Add(new TestCaseData(ivTestMethod.ToString()));
+                }
+
+				return testCases;
+            }
+		}
+		
 		[OneTimeSetUp]
 		public void Initialize()
 		{
@@ -27,6 +48,7 @@ namespace NUnitTests
 		}
 
 		[Test]
+		[Category("Create data extractor")]
 		public void TestAsInternalObjects()
 		{
 			var item1 = new JSONDataExtractor();
@@ -34,10 +56,11 @@ namespace NUnitTests
 //			Assert.AreEqual(item1.ReadonlyProperty, "MyValue"); 
 		}
 
-		[Test]
-		public void TestAsExternalObjects()
+		[TestCaseSource(nameof(TestCases))]
+		[Category("Test data extractor")]
+		public void TestAsExternalObjects(string testCase)
 		{
-			_host.RunTestScript("NUnitTests.Tests.external.os");
+			_host.RunTestMethod("NUnitTests.Tests.external.os", testCase);
 		}
 	}
 }
