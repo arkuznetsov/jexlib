@@ -9,6 +9,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resourses\testScript.os" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\jexlib\jexlib.csproj">
       <Project>{2D9DC5CD-8CDC-4DB0-A05F-A2E727C6920A}</Project>
       <Name>jexlib</Name>
