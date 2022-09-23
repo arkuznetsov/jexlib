@@ -23,7 +23,7 @@ using Newtonsoft.Json.Linq;
 namespace oscriptcomponent
 {
     /// <summary>
-    /// Предоставляет методы для упаковки / распаковки данных по алгоритму Deflate
+    /// Предоставляет методы для извлечения данных из JSON по запросу JSON-path
     /// </summary>
     [ContextClass("ИзвлечениеДанныхJSON", "JSONDataExtractor")]
     public class JSONDataExtractor : AutoContext<JSONDataExtractor>
@@ -150,7 +150,7 @@ namespace oscriptcomponent
         /// <param name="getObjectAsJSON">Булево. Истина - объекты будут возвращены в виде строки JSON;
         /// Ложь - Объекты будут возвращены в виде соответствия.</param>
         /// <returns>Строка - Выбранные данные</returns>
-        [ContextMethod("Выбрать", "Selec")]
+        [ContextMethod("Выбрать", "Select")]
         public IValue Select(string path, bool getObjectAsJSON = true)
         {
 
@@ -232,16 +232,6 @@ namespace oscriptcomponent
         }
 
         /// <summary>
-        /// Создает ИзвлечениеДанныхJSON
-        /// </summary>
-        /// <returns>ИзвлечениеДанныхJSON</returns>
-        [ScriptConstructor]
-        public static IRuntimeContextInstance Constructor()
-        {
-            return new JSONDataExtractor();
-        }
-
-        /// <summary>
         /// Преобразует строку JSON в соответствие
         /// </summary>
         /// <param name="JSONstring">Строка. Строка JSON.</param>
@@ -253,5 +243,16 @@ namespace oscriptcomponent
 
             return ((GlobalJsonFunctions)GlobalJsonFunctions.CreateInstance()).ReadJSONInMap(Reader);
         }
+
+        /// <summary>
+        /// Создает ИзвлечениеДанныхJSON
+        /// </summary>
+        /// <returns>ИзвлечениеДанныхJSON</returns>
+        [ScriptConstructor]
+        public static IRuntimeContextInstance Constructor()
+        {
+            return new JSONDataExtractor();
+        }
+
     }
 }
