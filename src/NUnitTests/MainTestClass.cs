@@ -24,7 +24,7 @@ namespace NUnitTests
 		public static List<TestCaseData> TestCases
 		{
 			get
-            {
+			{
 				var testCases = new List<TestCaseData>();
 				EngineHelpWrapper _host = new EngineHelpWrapper();
 				_host.StartEngine();
@@ -34,10 +34,10 @@ namespace NUnitTests
 				foreach (var ivTestMethod in testMethods)
 				{
 					testCases.Add(new TestCaseData(ivTestMethod.ToString()));
-                }
+				}
 
 				return testCases;
-            }
+			}
 		}
 		
 		[OneTimeSetUp]
