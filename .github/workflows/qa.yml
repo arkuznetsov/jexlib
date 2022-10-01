@@ -4,7 +4,15 @@
 
 name: Контроль качества
 # Любой пуш и pr в проекте но с фильтром по основному проекту
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - develop
 
 env:
   # отключение безопасности установки, от 2020-10-01
@@ -66,6 +74,8 @@ jobs:
             /d:sonar.host.url="${{ secrets.SONARQUBE_HOST }}"
             /d:sonar.login="${{ secrets.SONARQUBE_TOKEN }}"
             /d:sonar.branch.name="${{ env.BRANCH_NAME }}"
+            /d:sonar.cs.vscoveragexml.reportsPaths=./build/reports/coverage.xml
+            /d:sonar.cs.nunit.reportsPaths=./build/reports/nunit-result.xml
 
       # Начало анализа проекта в SonarQube (PR)
       # https://docs.sonarqube.org/latest/analysis/pull-request/
@@ -81,6 +91,8 @@ jobs:
             /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
             /d:sonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
             /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}
+            /d:sonar.cs.vscoveragexml.reportsPaths=./build/reports/coverage.xml
+            /d:sonar.cs.nunit.reportsPaths=./build/reports/nunit-result.xml
 
       # Сборка компоненты для тестирования
       - name: Сборка компоненты для тестирования
