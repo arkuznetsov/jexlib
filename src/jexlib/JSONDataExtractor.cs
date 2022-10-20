@@ -278,12 +278,9 @@ namespace oscriptcomponent
 
             IValue result = ValueFactory.Create();
 
-            if (sourceData.DataType != DataType.Object)
-                return result;
-
-            if (sourceData.AsObject() is ArrayImpl)
+            if (sourceData is ArrayImpl)
                 result = ValueFactory.Create(((ArrayImpl)sourceData).Count());
-            else if (sourceData.AsObject() is MapImpl)
+            else if (sourceData is MapImpl)
                 result = ValueFactory.Create(((MapImpl)sourceData).Count());
 
             return result;
@@ -299,10 +296,7 @@ namespace oscriptcomponent
 
             IValue result = ValueFactory.Create();
 
-            if (sourceData.DataType != DataType.Object)
-                return result;
-
-            if (!(sourceData.AsObject() is ArrayImpl))
+            if (!(sourceData is ArrayImpl))
                 return result;
 
             if (((ArrayImpl)sourceData).Count() == 0)
@@ -328,10 +322,7 @@ namespace oscriptcomponent
 
             IValue result = ValueFactory.Create();
 
-            if (sourceData.DataType != DataType.Object)
-                return result;
-
-            if (!(sourceData.AsObject() is ArrayImpl))
+            if (!(sourceData is ArrayImpl))
                 return result;
 
             if (((ArrayImpl)sourceData).Count() == 0)
@@ -357,10 +348,7 @@ namespace oscriptcomponent
 
             IValue result = ValueFactory.Create();
 
-            if (sourceData.DataType != DataType.Object)
-                return result;
-
-            if (!(sourceData.AsObject() is ArrayImpl))
+            if (!(sourceData is ArrayImpl))
                 return result;
 
             if (((ArrayImpl)sourceData).Count() == 0)
@@ -386,10 +374,7 @@ namespace oscriptcomponent
 
             IValue result = ValueFactory.Create();
 
-            if (sourceData.DataType != DataType.Object)
-                return result;
-
-            if (!(sourceData.AsObject() is ArrayImpl))
+            if (!(sourceData is ArrayImpl))
                 return result;
 
             if (((ArrayImpl)sourceData).Count() == 0)
@@ -415,10 +400,7 @@ namespace oscriptcomponent
 
             IValue result = ValueFactory.Create();
 
-            if (sourceData.DataType != DataType.Object)
-                return result;
-
-            if (!(sourceData.AsObject() is ArrayImpl))
+            if (!(sourceData is ArrayImpl))
                 return result;
 
             if (((ArrayImpl)sourceData).Count() == 0)
@@ -439,10 +421,7 @@ namespace oscriptcomponent
 
             IValue result = ValueFactory.Create();
 
-            if (sourceData.DataType != DataType.Object)
-                return result;
-
-            if (!(sourceData.AsObject() is ArrayImpl))
+            if (!(sourceData is ArrayImpl))
                 return result;
 
             if (((ArrayImpl)sourceData).Count() == 0)
@@ -465,26 +444,21 @@ namespace oscriptcomponent
 
             IValue result = ValueFactory.Create();
 
-            if (sourceData.DataType != DataType.Object)
-                return result;
-
-            if (sourceData.AsObject() is ArrayImpl && ((ArrayImpl)sourceData).Count() == 1)
+            if (sourceData is ArrayImpl && ((ArrayImpl)sourceData).Count() == 1)
                 sourceData = ((ArrayImpl)sourceData).Get(0);
             
-            if (!(sourceData.AsObject() is MapImpl))
+            if (!(sourceData is MapImpl))
                 return result;
 
             ArrayImpl keyArray = new ArrayImpl();
-            if (sourceData.AsObject() is MapImpl)
+            if (sourceData is MapImpl)
                 foreach (KeyAndValueImpl KeyValue in (MapImpl)sourceData)
                     keyArray.Add(KeyValue.Key);
-            else if (sourceData.AsObject() is ArrayImpl)
+            else if (sourceData is ArrayImpl)
                 for (int i = 0; i < ((ArrayImpl)sourceData).Count(); i++)
                     keyArray.Add(ValueFactory.Create(i));
 
-            result = ValueFactory.Create(keyArray);
-
-            return result;
+            return keyArray;
         }
 
         /// <summary>
