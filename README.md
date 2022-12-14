@@ -1,5 +1,3 @@
-# Oscript JSON data extractor component
-
 [![GitHub release](https://img.shields.io/github/release/ArKuznetsov/jexlib.svg?style=flat-square)](https://github.com/ArKuznetsov/jexlib/releases)
 [![GitHub license](https://img.shields.io/github/license/ArKuznetsov/jexlib.svg?style=flat-square)](https://github.com/ArKuznetsov/jexlib/blob/master/LICENSE)
 [![GitHub Releases](https://img.shields.io/github/downloads/ArKuznetsov/jexlib/latest/total?style=flat-square)](https://github.com/ArKuznetsov/jexlib/releases)
@@ -9,6 +7,10 @@
 [![Quality Gate](https://open.checkbsl.org/api/project_badges/measure?project=jexlib&metric=alert_status)](https://open.checkbsl.org/dashboard/index/jexlib)
 [![Coverage](https://open.checkbsl.org/api/project_badges/measure?project=jexlib&metric=coverage)](https://open.checkbsl.org/dashboard/index/jexlib)
 [![Tech debt](https://open.checkbsl.org/api/project_badges/measure?project=jexlib&metric=sqale_index)](https://open.checkbsl.org/dashboard/index/jexlib)
+
+<div style="text-align:right"><a href="https://checkbsl.org"><img alt="Checked by Silver Bulleters SonarQube BSL plugin" src="https://web-files.do.bit-erp.ru/sonar/b_t.png" style="width:400px"/></a></div>
+
+# Oscript JSON data extractor component
 
 ## Компонента извлечения данных из JSON по указанному пути JSON-Path для oscript
 
