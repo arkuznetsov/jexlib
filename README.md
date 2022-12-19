@@ -8,7 +8,7 @@
 [![Coverage](https://open.checkbsl.org/api/project_badges/measure?project=jexlib&metric=coverage)](https://open.checkbsl.org/dashboard/index/jexlib)
 [![Tech debt](https://open.checkbsl.org/api/project_badges/measure?project=jexlib&metric=sqale_index)](https://open.checkbsl.org/dashboard/index/jexlib)
 
-<div style="text-align:right"><a href="https://checkbsl.org"><img alt="Checked by Silver Bulleters SonarQube BSL plugin" src="https://web-files.do.bit-erp.ru/sonar/b_t.png" style="width:400px"/></a></div>
+<a href="https://checkbsl.org"><img alt="Checked by Silver Bulleters SonarQube BSL plugin" src="https://web-files.do.bit-erp.ru/sonar/b_t.png" align="right" style="width:400px"/></a>
 
 # Oscript JSON data extractor component
 
